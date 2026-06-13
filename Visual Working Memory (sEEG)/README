@@ -1,0 +1,25 @@
+# VISUAL WORKING MEMORY PIPELINE
+
+This repository hosts a high-performance, row-vectorized MATLAB pipeline designed to extract and analyze multi-channel neural dynamics from human intracranial electrophysiology (sEEG/iEEG) data. The framework is optimized to process large-scale clinical recordings during a visual Working Memory (WM) task with parametric cognitive loads (LOAD2, LOAD4, LOAD6 vs. CONTROL).
+
+## 🧠 Neuroscientific Focus
+The pipeline targets cognitive mechanisms supporting visual information retention during the maintenance (delay) period, specifically tracking:
+* **Multi-band Amplitude Envelopes:** Continuous tracking of Theta, Alpha, Beta, Low Gamma, and High-Frequency Activity (HFA).
+* **Cross-Frequency Coupling (CFC):** Phase-Amplitude Coupling (PAC) evaluating how low-frequency phase (Theta and Alpha) modulates high-frequency amplitude (HFA) profiles.
+* **Spectral Power Density (PSD):** Evaluation of HFA envelope modulation frequencies using Welch's periodogram methods to identify dominant periodicities.
+
+## ⚡ Computational Optimizations & Performance
+Unlike traditional channel-by-channel iterative looping, this script is engineered under data-science best practices to maximize processing velocity and minimize memory (RAM) overhead:
+* **Row-Vectorized Filtering:** Sub-band IIR/Butterworth filters and Hilbert transforms are applied matrix-wide across all bipolar montages simultaneously in a single execution step.
+* **Decoupled Graphics Architecture:** Core mathematical, statistical, and permutation loops are entirely decoupled from the plotting engine. Figures are generated downstream with rendering visibility turned off (`'Visible', 'off'`), preventing graphical thread overhead.
+* **Shared Permutation Distributions:** The heavy 1,000-iteration Phase-Amplitude Coupling shuffling routine computes and shares the null distribution once per experimental condition, mitigating redundant algorithmic loops.
+
+## 📊 Advanced Statistical Framework
+* **Sample-Wise FDR Correction:** Applies the Benjamini-Hochberg False Discovery Rate (FDR) procedure exclusively restricted to the delay period to strictly control for Type I errors across time-series bins.
+* **Non-Parametric Contrasts:** Utilizes Wilcoxon signed-rank tests for direct LOAD6 vs. CONTROL tracking and Kruskal-Wallis tests for multi-condition load dependency screening.
+
+## 📁 Repository Contents
+* `VisualWM_MultiChannel_Pipeline.m`: The complete, self-contained optimization pipeline (structured from Data Ingestion to Vectorized Pre-filtering, Statistical Processing, and Downstream Plotting).
+
+## ⚠️ Data Privacy Note
+In compliance with clinical institutional review boards (IRB) and international data protection laws, **no raw patient bio-signals, diagnostic imaging tracks, or structural tables are hosted in this public repository**. All file pathways are generalized, and patient identifiers are fully de-identified (`Patient 6` -> generic structure).
