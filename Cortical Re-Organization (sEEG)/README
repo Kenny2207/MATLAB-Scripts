@@ -1,0 +1,19 @@
+# Human sEEG Data Processing Pipeline for Cortical Re-organization
+
+This repository contains a reproducible MATLAB pipeline developed to analyze human intracranial electrophysiology (stereo-EEG) data. The workflow is specifically tailored to investigate functional cortical reorganization and neuroplasticity changes before (Pre) and after (Post) lesion-based surgical interventions (e.g., radiofrequency thermocoagulation) in patients with focal epilepsy.
+
+## 🧠 Core Features
+* **Data Ingestion & Segmentation:** Automated import workflows for clinical neural data formats and epoch segmentation.
+* **Anatomical Filtering:** Integration with structural MNI-space coordinate datasets (`.tsv`) to filter and select specific gray matter contacts (e.g., somatosensory sites).
+* **Artifact Handling:** Specialized subroutines for artifact identification, visual inspection plotting, and hardcoded interpolation channels.
+* **Advanced Electrophysiological Analysis:** * Time-Frequency Analysis (TFA) using custom spectral decomposition.
+  * Intracranial Evoked Responses (iERP) processing routines.
+* **Statistical Modelling:** Paired parametric testing (Pre vs. Post conditions), cross-correlation of significant tracks, and lost-contacts responsiveness screening.
+* **Reporting:** Complete metadata aggregation and multi-table sheet generation exported directly into Excel formats.
+
+## 📁 Repository Structure
+* `Main.m`: The primary pipeline execution script managing the overall data flow.
+* `utils/`: Core function library containing custom signal processing and visualization subroutines (e.g., `time_freq_analysis.m`, `compute_iERP.m`).
+
+## ⚠️ Data Privacy Note
+In compliance with clinical ethics policies and sensitive data regulations, **no real patient bio-signal or imaging data is hosted in this repository**. All data paths in the script are generalized, and structural labels (`PAT1`) are fully anonymized.
