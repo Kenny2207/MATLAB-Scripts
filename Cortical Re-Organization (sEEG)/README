@@ -1,19 +1,23 @@
-# Human sEEG Data Processing Pipeline for Cortical Re-organization
+# Modular Intracranial Electrophysiology (iEEG/sEEG) Processing Pipeline
 
-This repository contains a reproducible MATLAB pipeline developed to analyze human intracranial electrophysiology (stereo-EEG) data. The workflow is specifically tailored to investigate functional cortical reorganization and neuroplasticity changes before (Pre) and after (Post) lesion-based surgical interventions (e.g., radiofrequency thermocoagulation) in patients with focal epilepsy.
+This repository contains a modular, function-based MATLAB pipeline designed for the preprocessing, spectral decomposition, and statistical evaluation of multi-channel intracranial electrophysiology data (sEEG/iEEG). The architecture is structured to ensure computational reproducibility and programmatic flexibility across multi-trial datasets.
 
-## 🧠 Core Features
-* **Data Ingestion & Segmentation:** Automated import workflows for clinical neural data formats and epoch segmentation.
-* **Anatomical Filtering:** Integration with structural MNI-space coordinate datasets (`.tsv`) to filter and select specific gray matter contacts (e.g., somatosensory sites).
-* **Artifact Handling:** Specialized subroutines for artifact identification, visual inspection plotting, and hardcoded interpolation channels.
-* **Advanced Electrophysiological Analysis:** * Time-Frequency Analysis (TFA) using custom spectral decomposition.
-  * Intracranial Evoked Responses (iERP) processing routines.
-* **Statistical Modelling:** Paired parametric testing (Pre vs. Post conditions), cross-correlation of significant tracks, and lost-contacts responsiveness screening.
-* **Reporting:** Complete metadata aggregation and multi-table sheet generation exported directly into Excel formats.
+## 🛠️ Pipeline Architecture & Signal Processing Workflow
+The framework is divided into independent, specialized computational modules coordinated by a central orchestrator script:
+
+* **Data Ingestion & Anatomical Filtering:** Functions for parsing raw electrophysiological files, extracting digital trigger timestamps, and automatically sub-selecting channels based on structural coordinate matrices (e.g., MNI space atlas tables).
+* **Localized Artifact Rejection:** Implementation of localized, shape-preserving Piecewise Cubic Hermite Interpolating Polynomials (`pchips`) and linear interpolation routines to reconstruct transient signal corruptions across channel-trial configurations before downstream filtering.
+* **Spectral Decomposition (Time-Frequency Analysis):** Time-frequency transformation of trials to extract absolute power profiles, followed by trial-by-trial baseline mean-subtraction and Z-score normalization.
+* **Evoked Potential Extraction (iERP):** A specialized sub-pipeline featuring zero-phase forward and reverse IIR/Butterworth bandpass filtering, temporal decimation (downsampling), trial-specific baseline correction, and grand averaging across epoch profiles.
+
+## 📊 Statistical Evaluation Engine
+To isolate robust neurophysiological responses while controlling for Type I errors (false positives), the pipeline implements:
+* **Sample-Wise Parametric Contrasts:** Continuous one-sample t-tests against baseline distributions executed across post-stimulus time-series bins.
+* **Temporal Cluster-Based Correction:** Automated grouping of consecutive significant time bins. A channel is statistically flagged as responsive only if it satisfies a conservative minimum consecutive cluster length threshold.
+* **Cross-Condition Intersections:** Modules dedicated to paired t-tests, cross-correlations, and variance screening (Standard Deviation) between distinct recording runs or experimental conditions.
 
 ## 📁 Repository Structure
-* `Main.m`: The primary pipeline execution script managing the overall data flow.
-* `utils/`: Core function library containing custom signal processing and visualization subroutines (e.g., `time_freq_analysis.m`, `compute_iERP.m`).
-
-## ⚠️ Data Privacy Note
-In compliance with clinical ethics policies and sensitive data regulations, **no real patient bio-signal or imaging data is hosted in this repository**. All data paths in the script are generalized, and structural labels (`PAT1`) are fully anonymized.
+* `Main.m`: The primary pipeline orchestrator managing data paths, configuration settings, and function execution sequences.
+* `time_freq_analysis.m`: Core module executing spectral decomposition, baseline normalization, and temporal clustering statistics.
+* `compute_iERP.m`: Computational routine handling digital filtering, downsampling, and time-locked evoked potential statistics.
+* `interpolate_artifact_hardcoded.m`: Localized boundary-anchored interpolation script for signal transient removal.
